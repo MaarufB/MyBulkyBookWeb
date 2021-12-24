@@ -1,0 +1,17 @@
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\bin\Debug\net6.0\BulkyBook.DataAccess.deps.json
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\bin\Debug\net6.0\BulkyBook.DataAccess.runtimeconfig.json
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\bin\Debug\net6.0\BulkyBook.DataAccess.dll
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\bin\Debug\net6.0\ref\BulkyBook.DataAccess.dll
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\bin\Debug\net6.0\BulkyBook.DataAccess.pdb
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\bin\Debug\net6.0\BulkyBook.Models.dll
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\bin\Debug\net6.0\BulkyBook.Models.pdb
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.csproj.AssemblyReference.cache
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.AssemblyInfoInputs.cache
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.AssemblyInfo.cs
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.csproj.CoreCompileInputs.cache
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.csproj.CopyComplete
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.dll
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\ref\BulkyBook.DataAccess.dll
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.pdb
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.DataAccess\obj\Debug\net6.0\BulkyBook.DataAccess.genruntimeconfig.cache
