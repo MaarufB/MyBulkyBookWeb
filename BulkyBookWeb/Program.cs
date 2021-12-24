@@ -3,6 +3,7 @@ using BulkyBook.DataAccess;
 using BulkyBook.DataAccess.Repository;
 using BulkyBook.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnectionString")
     ));
+//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+//    .AddEntityFrameworkStores<ApplicationDbContext>(); builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//     options.UseSqlServer(connectionString)); builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddDefaultIdentity<IdentityUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -28,9 +34,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles(); // to use static files wwwroot
 
 app.UseRouting();
+app.UseAuthentication(); // Authentication always comes before Authorization
+app.UseAuthorization();
 
-app.UseAuthorization();  
- 
+// Map Razor Pages
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
@@ -44,3 +52,10 @@ app.Run();
 
 
 // Migration commands
+
+
+// Authentication alwasys comes before Authorization, if Authorization comes before Authentication, the Authentication will never worked
+
+
+
+// When Mapping razor pages you need to manually added routing on Program.cs by app.MapRazorPages();
