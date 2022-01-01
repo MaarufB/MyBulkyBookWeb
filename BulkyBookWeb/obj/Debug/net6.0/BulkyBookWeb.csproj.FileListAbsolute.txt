@@ -562,3 +562,4 @@ D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bi
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\BulkyBook.Utility.dll
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\BulkyBook.Utility.pdb
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\Stripe.net.dll
