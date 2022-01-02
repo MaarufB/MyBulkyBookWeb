@@ -35,6 +35,9 @@
             "projectReferences": {
               "D:\\MyFiles\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBook.Models\\BulkyBook.Models.csproj": {
                 "projectPath": "D:\\MyFiles\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBook.Models\\BulkyBook.Models.csproj"
+              },
+              "D:\\MyFiles\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBook.Utility\\BulkyBook.Utility.csproj": {
+                "projectPath": "D:\\MyFiles\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBook.Utility\\BulkyBook.Utility.csproj"
               }
             }
           }
