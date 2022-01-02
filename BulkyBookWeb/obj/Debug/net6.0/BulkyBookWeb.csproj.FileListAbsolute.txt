@@ -566,3 +566,4 @@ D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bi
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\MailKit.dll
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\MimeKit.dll
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\BouncyCastle.Crypto.dll
+D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.Facebook.dll
