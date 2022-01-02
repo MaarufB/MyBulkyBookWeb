@@ -102,6 +102,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             {
                 var service = new SessionService();
                 var session = service.Get(orderHeader.SessionId);
+                var orderHeaderIsNull = orderHeader.OrderStatus;
                 // Check the stripe status
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
