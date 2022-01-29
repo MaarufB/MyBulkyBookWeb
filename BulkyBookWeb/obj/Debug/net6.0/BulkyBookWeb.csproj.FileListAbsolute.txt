@@ -1127,3 +1127,7 @@ D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\o
 D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\obj\Debug\net6.0\scopedcss\projectbundle\BulkyBookWeb.bundle.scp.css
 D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\obj\Debug\net6.0\BulkyBookWeb.csproj.CopyComplete
 D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\obj\Debug\net6.0\BulkyBookWeb.genruntimeconfig.cache
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\appsettings - Copy.Development.json
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\appsettings - Copy.json
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\Npgsql.dll
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
