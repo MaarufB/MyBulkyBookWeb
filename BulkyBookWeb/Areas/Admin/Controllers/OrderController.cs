@@ -104,9 +104,12 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 var session = service.Get(orderHeader.SessionId);
                 var orderHeaderIsNull = orderHeader.OrderStatus;
                 // Check the stripe status
+                // To elminate the warning for null
+                var orderStatus =  orderHeader.OrderStatus != null ? orderHeader.OrderStatus : "Null";
+
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
-                    _unitOfWork.OrderHeader.UpdateStatus(orderHeaderid, orderHeader.OrderStatus, SD.PaymentStatusApproved);
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeaderid, orderStatus, SD.PaymentStatusApproved);
                     _unitOfWork.Save();
                 }
             }

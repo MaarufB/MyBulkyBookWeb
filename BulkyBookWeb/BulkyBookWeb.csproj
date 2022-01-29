@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.1" />
@@ -22,12 +23,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1" />
+    <PackageReference Include="MimeKit" Version="3.0.0" />
     <PackageReference Include="Stripe.net" Version="39.84.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\BulkyBook.DataAccess\BulkyBook.DataAccess.csproj" />
-    <ProjectReference Include="..\BulkyBook.Utility\BulkyBook.Utility.csproj" />
   </ItemGroup>
 
 </Project>
