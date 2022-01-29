@@ -10,3 +10,15 @@ D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utili
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\ref\BulkyBook.Utility.dll
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.pdb
 D:\MyFiles\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.csproj.AssemblyReference.cache
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.csproj.AssemblyReference.cache
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.GeneratedMSBuildEditorConfig.editorconfig
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.AssemblyInfoInputs.cache
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.AssemblyInfo.cs
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.csproj.CoreCompileInputs.cache
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.dll
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\ref\BulkyBook.Utility.dll
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\obj\Debug\net6.0\BulkyBook.Utility.pdb
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\bin\Debug\net6.0\BulkyBook.Utility.deps.json
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\bin\Debug\net6.0\BulkyBook.Utility.dll
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\bin\Debug\net6.0\ref\BulkyBook.Utility.dll
+D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBook.Utility\bin\Debug\net6.0\BulkyBook.Utility.pdb
