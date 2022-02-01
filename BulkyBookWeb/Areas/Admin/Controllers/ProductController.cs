@@ -23,27 +23,27 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //IEnumerable<Product> objPoductList = _unitOfWork.Product.GetAll();
-            return View();
+            return await Task.Run(() => View());
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            return await Task.Run(() => View());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CoverType obj)
+        public async Task<IActionResult> Create(CoverType obj)
         {
             if (!ModelState.IsValid) ModelState.AddModelError("name", "Cover Type name is not valid");
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.CoverType.Add(obj);
-                _unitOfWork.Save();
+                await _unitOfWork.CoverType.AddAsync(obj);
+                await _unitOfWork.SaveAsync();
                 TempData["success"] = "Cover Type created successfully!";
 
                 return RedirectToAction("Index");
@@ -86,7 +86,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(ProductVM obj, IFormFile? file)
+        public async Task<IActionResult> Upsert(ProductVM obj, IFormFile? file)
         {
             
             if (ModelState.IsValid)
@@ -110,7 +110,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
                     using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extention), FileMode.Create))
                     {
-                        file.CopyToAsync(fileStreams);
+                        await file.CopyToAsync(fileStreams);
                     }
 
                     byte[] imageArray = System.IO.File.ReadAllBytes(Path.Combine(uploads, fileName + extention));
@@ -122,14 +122,14 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
                 if(obj.Product.Id == 0)
                 {
-                    _unitOfWork.Product.Add(obj.Product);
+                    await _unitOfWork.Product.AddAsync(obj.Product);
                 }
                 else
                 {
                      _unitOfWork.Product.Update(obj.Product);
                 }
 
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
                 TempData["success"] = "Product created successfully!";
 
                 return RedirectToAction("Index");
@@ -160,7 +160,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             var obj = _unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);
 
@@ -172,8 +172,8 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 System.IO.File.Delete(oldImagePath);
             }
 
-            _unitOfWork.Product.Remove(obj);
-            _unitOfWork.Save();
+            await _unitOfWork.Product.RemoveAsync(obj);
+            await _unitOfWork.SaveAsync();
 
             return Json(new {success = true, message = "Product successfully deleted"});
 

@@ -54,7 +54,7 @@ namespace BulkyBook.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public IActionResult Details(ShoppingCart shoppingCart)
+        public async Task<IActionResult> Details(ShoppingCart shoppingCart)
         {
             var claimsIdentity = (ClaimsIdentity?)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -66,15 +66,15 @@ namespace BulkyBook.Controllers
 
             if(cartFromDb == null)
             {
-                _unitOfWork.ShoppingCart.Add(shoppingCart);
-                _unitOfWork.Save();
+                await _unitOfWork.ShoppingCart.AddAsync(shoppingCart);
+                await _unitOfWork.SaveAsync();
                 HttpContext.Session.SetInt32(SD.SessionCart,
                     _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
             }
             else
             {
                 _unitOfWork.ShoppingCart.IncrementCount(cartFromDb, shoppingCart.Count);
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
 
             return RedirectToAction(nameof(Index));

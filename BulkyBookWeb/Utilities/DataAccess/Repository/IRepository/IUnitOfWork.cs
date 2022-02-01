@@ -19,6 +19,6 @@ namespace BulkyBook.DataAccess.Repository.IRepository
         IOrderHeaderRepository OrderHeader { get; }
 
 
-        void Save();
+        Task SaveAsync();
     }
 }

@@ -50,8 +50,8 @@ namespace BulkyBook.Controllers
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Add(obj);
-                _unitOfWork.Save();
+                _unitOfWork.Category.AddAsync(obj);
+                _unitOfWork.SaveAsync();
                 TempData["success"] = "Category created successfully";
 
                 return RedirectToAction("Index");
@@ -95,7 +95,7 @@ namespace BulkyBook.Controllers
             if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Update(obj);
-                _unitOfWork.Save();
+                _unitOfWork.SaveAsync();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
 
@@ -131,8 +131,8 @@ namespace BulkyBook.Controllers
 
             if (obj == null) return NotFound();
 
-            _unitOfWork.Category.Remove(obj);
-            _unitOfWork.Save();
+            _unitOfWork.Category.RemoveAsync(obj);
+            _unitOfWork.SaveAsync();
             TempData["success"] = "Category deleted successfully";
 
             return RedirectToAction("Index");

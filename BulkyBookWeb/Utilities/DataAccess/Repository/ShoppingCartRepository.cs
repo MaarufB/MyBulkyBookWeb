@@ -16,17 +16,17 @@ namespace BulkyBook.DataAccess.Repository
             _db = db;
         }
 
-        public int DecrementCount(ShoppingCart shoppingCart, int count)
+        public async Task<int> DecrementCount(ShoppingCart shoppingCart, int count)
         {
             shoppingCart.Count -= count;
-            return shoppingCart.Count;
+            return await Task.Run(() => shoppingCart.Count);
         }
 
-        public int IncrementCount(ShoppingCart shoppingCart, int count)
+        public async Task<int> IncrementCount(ShoppingCart shoppingCart, int count)
         {
             shoppingCart.Count += count;
 
-            return shoppingCart.Count;
+            return await Task.Run(() => shoppingCart.Count);
         }
     }
 }

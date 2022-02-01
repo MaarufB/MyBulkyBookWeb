@@ -20,7 +20,8 @@
 
 				<div class="mb-3">
 					<label asp-for="Product.Description"></label>
-					<textarea asp-for="Product.Description" rows="3 " class="form-control"></textarea>
+					@*<textarea asp-for="Product.Description" rows="3 " class="form-control"></textarea>*@
+					<input asp-for="Product.Description" rows="3 " class="form-control" />
 					<span asp-validation-for="Product.Description"></span>
 				</div>
 

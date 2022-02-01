@@ -1131,4 +1131,3 @@ D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\b
 D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\appsettings - Copy.json
 D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\Npgsql.dll
 D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\bin\Debug\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
-D:\My_Files\SofwareCareerPath\Dotnet Development\Course\BulkyBook\BulkyBookWeb\obj\Debug\net6.0\BulkyBookWeb.csproj.AssemblyReference.cache

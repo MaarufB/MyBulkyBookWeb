@@ -17,9 +17,9 @@ namespace BulkyBook.DataAccess.Repository
 
         }
 
-        public void Save()
+        public async Task Save()
         {
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
         public void Update(Product obj)

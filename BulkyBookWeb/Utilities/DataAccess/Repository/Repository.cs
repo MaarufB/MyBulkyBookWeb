@@ -22,9 +22,9 @@ namespace BulkyBook.DataAccess.Repository
             this.dbSet = _db.Set<T>();  
         }
 
-        public void Add(T entity)
+        public async Task AddAsync(T entity)
         {
-            dbSet.Add(entity);
+            await dbSet.AddAsync(entity);
         }
         // inludeProp - "Category, CoverType"
         public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter=null, string? includeProperties = null)
@@ -71,12 +71,12 @@ namespace BulkyBook.DataAccess.Repository
             return query.FirstOrDefault(); // To eleminate the warning the best approach to use is query.First()
         }
 
-        public void Remove(T entity)
+        public async Task RemoveAsync(T entity)
         {
             dbSet.Remove(entity);
         }
 
-        public void RemoveRange(IEnumerable<T> entity)
+        public async Task RemoveRangeAsync(IEnumerable<T> entity)
         {
             dbSet.RemoveRange(entity);
         }

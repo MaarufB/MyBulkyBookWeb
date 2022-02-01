@@ -42,8 +42,8 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Company.Add(obj);
-                _unitOfWork.Save();
+                _unitOfWork.Company.AddAsync(obj);
+                _unitOfWork.SaveAsync();
                 TempData["success"] = "Company created successfully!";
 
                 return RedirectToAction("Index");
@@ -83,7 +83,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
                 if(obj.Id == 0)
                 {
-                    _unitOfWork.Company.Add(obj);
+                    _unitOfWork.Company.AddAsync(obj);
                     TempData["success"] = "Company created successfully!";
                 }
                 else
@@ -92,7 +92,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                     TempData["success"] = "Company updated successfully!";
                 }
 
-                _unitOfWork.Save();
+                _unitOfWork.SaveAsync();
 
 
                 return RedirectToAction("Index");
@@ -117,8 +117,8 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             if (obj == null) return Json(new {success = false, message="Error while deleting"});
 
-            _unitOfWork.Company.Remove(obj);
-            _unitOfWork.Save();
+            _unitOfWork.Company.RemoveAsync(obj);
+            _unitOfWork.SaveAsync();
 
             return Json(new {success = true, message = "Company successfully deleted"});
 

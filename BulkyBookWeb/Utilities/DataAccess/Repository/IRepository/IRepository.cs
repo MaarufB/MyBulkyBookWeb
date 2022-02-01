@@ -13,9 +13,9 @@ namespace BulkyBook.DataAccess.Repository.IRepository
         // T - Category
         T GetFirstOrDefault(Expression<Func<T, bool>> filter,string? includeProperties = null, bool tracked = true); // Change GetFirstOrDefault to Find()
         IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter=null, string? includeProperties = null);
-        void Add(T entity);
-        void Remove(T entity);
-        void RemoveRange(IEnumerable<T> entity);
+        Task AddAsync(T entity);
+        Task RemoveAsync(T entity);
+        Task RemoveRangeAsync(IEnumerable<T> entity);
     
     }
 }

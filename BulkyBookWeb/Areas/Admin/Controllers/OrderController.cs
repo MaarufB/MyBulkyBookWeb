@@ -87,7 +87,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             orderVM.OrderHeader.SessionId = session.Id;
             orderVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
             _unitOfWork.OrderHeader.UpdateStripePaymentID(orderVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
-            _unitOfWork.Save();
+            _unitOfWork.SaveAsync();
             Response.Headers.Add("Location", session.Url);
          
             return new StatusCodeResult(303);
@@ -110,7 +110,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
                     _unitOfWork.OrderHeader.UpdateStatus(orderHeaderid, orderStatus, SD.PaymentStatusApproved);
-                    _unitOfWork.Save();
+                    _unitOfWork.SaveAsync();
                 }
             }
 
@@ -119,8 +119,8 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
 
 
-            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
-            _unitOfWork.Save();
+            _unitOfWork.ShoppingCart.RemoveRangeAsync(shoppingCarts);
+            _unitOfWork.SaveAsync();
 
             return View(orderHeaderid);
 
@@ -149,7 +149,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 orderHeaderFromDb.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
             }
             _unitOfWork.OrderHeader.Update(orderHeaderFromDb);
-            _unitOfWork.Save();
+            _unitOfWork.SaveAsync();
 
             TempData["Success"] = "Order Details Upated Successfully!";
 
@@ -163,7 +163,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         public IActionResult StartProcessing(int orderId)
         {
             _unitOfWork.OrderHeader.UpdateStatus(orderVM.OrderHeader.Id, SD.StatusInProcess);
-            _unitOfWork.Save();
+            _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Status Upated Successfully!";
 
             return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
@@ -187,7 +187,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
 
             _unitOfWork.OrderHeader.Update(orderHeader);  
-            _unitOfWork.Save();
+            _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Shipped Successfully!";
 
             return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
@@ -217,7 +217,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
             }
 
-            _unitOfWork.Save();
+            _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Cancelled Successfully!";
 
             return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
