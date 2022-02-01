@@ -84,7 +84,6 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(ProductVM obj, IFormFile? file)
@@ -92,27 +91,33 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             
             if (ModelState.IsValid)
             {
-                var wwwRootPath = _webHostEnvironment.WebRootPath;
+                var tempPath = Path.GetTempPath();//_webHostEnvironment.WebRootPath;
+
                 if (file != null)
                 {
                     var fileName = Guid.NewGuid().ToString();
-                    var uploads = Path.Combine(wwwRootPath, @"images\products");
+                    var uploads = tempPath;  // Path.Combine(tempPath, @"images\products");
                     var extention = Path.GetExtension(file.FileName);
-
+                   
                     if (obj.Product.ImageUrl != null)
                     {
-                        var oldImagePath = Path.Combine(wwwRootPath, obj.Product.ImageUrl.Trim('\\'));
+                        var oldImagePath = Path.Combine(tempPath, obj.Product.ImageUrl.Trim('\\'));
                         if (System.IO.File.Exists(oldImagePath))
                         {
-                            System.IO.File.Delete(oldImagePath); 
+                            System.IO.File.Delete(oldImagePath);
                         }
                     }
 
                     using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extention), FileMode.Create))
                     {
-                        file.CopyTo(fileStreams);
+                        file.CopyToAsync(fileStreams);
                     }
-                    obj.Product.ImageUrl = @"\images\products\" + fileName + extention;
+
+                    byte[] imageArray = System.IO.File.ReadAllBytes(Path.Combine(uploads, fileName + extention));
+
+                    string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+
+                    obj.Product.ImageUrl = $"data:image/{extention};base64,{base64ImageRepresentation}"; //@"\images\products\" + fileName + extention;
                 }
 
                 if(obj.Product.Id == 0)

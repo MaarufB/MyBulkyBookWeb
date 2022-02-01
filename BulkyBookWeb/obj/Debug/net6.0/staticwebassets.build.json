@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "dBi0GidR2G6xAbx1Tniorc3Til010KGhizezdME72Vo=",
+  "Hash": "h7RcFTc+AxvezjcgT2/hUsPjBMTIDyw//g83N/e0TnE=",
   "Source": "BulkyBookWeb",
   "BasePath": "_content/BulkyBookWeb",
   "Mode": "Default",
@@ -1258,6 +1258,23 @@
       "OriginalItemSpec": "wwwroot\\images\\products\\3bb36c09-48b0-473b-98e4-6a7fa799ab40.jpg"
     },
     {
+      "Identity": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\wwwroot\\images\\products\\5d2878df-e7bb-4230-b490-336c7f5adb84.PNG",
+      "SourceId": "BulkyBookWeb",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\wwwroot\\",
+      "BasePath": "_content/BulkyBookWeb",
+      "RelativePath": "images/products/5d2878df-e7bb-4230-b490-336c7f5adb84.PNG",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\products\\5d2878df-e7bb-4230-b490-336c7f5adb84.PNG"
+    },
+    {
       "Identity": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\wwwroot\\images\\products\\7ba17a10-c147-453b-9161-6417366ff4e9.PNG",
       "SourceId": "BulkyBookWeb",
       "SourceType": "Discovered",
@@ -1273,6 +1290,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\products\\7ba17a10-c147-453b-9161-6417366ff4e9.PNG"
+    },
+    {
+      "Identity": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\wwwroot\\images\\products\\870d090c-7ed5-467d-bce4-b3c7c27b33c2.jpg",
+      "SourceId": "BulkyBookWeb",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\wwwroot\\",
+      "BasePath": "_content/BulkyBookWeb",
+      "RelativePath": "images/products/870d090c-7ed5-467d-bce4-b3c7c27b33c2.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\products\\870d090c-7ed5-467d-bce4-b3c7c27b33c2.jpg"
     },
     {
       "Identity": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\wwwroot\\images\\products\\9e173699-0f53-4a48-978e-9b54f993f97a.jpg",
