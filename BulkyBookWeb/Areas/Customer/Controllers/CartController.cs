@@ -224,10 +224,10 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             }
             else
             {
-                _unitOfWork.ShoppingCart.DecrementCount(cart, 1);
+                await _unitOfWork.ShoppingCart.DecrementCount(cart, 1);
             }
 
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync();
              
             return RedirectToAction(nameof(Index));
         }

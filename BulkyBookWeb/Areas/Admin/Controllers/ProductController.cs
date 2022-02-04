@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BulkyBook.Utility;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
+//using System.Drawing;
+//using System.Drawing.Drawing2D;
+//using System.Drawing.Imaging;
+
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
@@ -102,7 +105,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                     var uploads = tempPath;  // Path.Combine(tempPath, @"images\products");
                     var extention = Path.GetExtension(file.FileName);
                     var saveFile = Path.Combine(uploads, fileName+ extention);
-                   
+
                     if (obj.Product.ImageUrl != null)
                     {
                         var oldImagePath = Path.Combine(tempPath, obj.Product.ImageUrl.Trim('\\'));
@@ -112,19 +115,27 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                         }
                     }
 
-                    using (var fileStreams = new FileStream(saveFile, FileMode.Create))
+
+                    //using (var fileStreams = new FileStream(saveFile, FileMode.Create))
+                    //{
+                    //    await file.CopyToAsync(fileStreams); 
+                    //}
+
+                    //var bitmapImage = new Bitmap(saveFile);
+                    //var resizeImage = await ResizeImage(bitmapImage, 300, 300);
+                    //var imageArray = await ImageToByte(resizeImage);
+                    
+                    using (var laborImg = Image.Load(file.OpenReadStream()))
                     {
-                        await file.CopyToAsync(fileStreams); 
+                        laborImg.Mutate(x => x.Resize(300, 300));
+                        laborImg.Save(saveFile);
+                        laborImg.Dispose();
                     }
 
-                    var bitmapImage = new Bitmap(saveFile);
-                    var resizeImage = await ResizeImage(bitmapImage, 300, 300);
-                    var imageArray = await ImageToByte(resizeImage);
-                    // byte[] imageArray = System.IO.File.ReadAllBytes(Path.Combine(uploads, fileName + extention));
+                    byte[] imageArray = System.IO.File.ReadAllBytes(saveFile); //Path.Combine(uploads, fileName + extention)
                     string base64ImageRepresentation = Convert.ToBase64String(imageArray); //imageArray
 
                     obj.Product.ImageUrl = $"data:image/{extention};base64,{base64ImageRepresentation}"; //@"\images\products\" + fileName + extention;
-
                 }
 
                 if(obj.Product.Id == 0)
@@ -188,39 +199,40 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         #endregion
 
+        
 
-        public async Task<byte[]> ImageToByte(Image? img)
-        {
-            ImageConverter converter = new ImageConverter();
-            byte[]? data = null;
+        //public async Task<byte[]> ImageToByte(Image? img)
+        //{
+        //    ImageConverter converter = new ImageConverter();
+        //    byte[]? data = null;
 
-            if (img is not null)
-            {
-                data = (byte[]?)converter.ConvertTo(img, typeof(byte[]));
-            }
+        //    if (img is not null)
+        //    {
+        //        data = (byte[]?)converter.ConvertTo(img, typeof(byte[]));
+        //    }
 
-            return await Task.Run(() => data);
-        }
+        //    return await Task.Run(() => data);
+        //}
 
-        public async Task<Bitmap> ResizeImage(Image image, int width, int height)
-        {
-            var destRect = new Rectangle(0, 0, width, height);
-            var resultImage = new Bitmap(width, height);
-            resultImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-            using (var graphics = Graphics.FromImage(resultImage))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
-            return await Task.Run(() => resultImage);
-        }
+        //public async Task<Bitmap> ResizeImage(Image image, int width, int height)
+        //{
+        //    var destRect = new Rectangle(0, 0, width, height);
+        //    var resultImage = new Bitmap(width, height);
+        //    resultImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+        //    using (var graphics = Graphics.FromImage(resultImage))
+        //    {
+        //        graphics.CompositingMode = CompositingMode.SourceCopy;
+        //        graphics.CompositingQuality = CompositingQuality.HighQuality;
+        //        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+        //        graphics.SmoothingMode = SmoothingMode.HighQuality;
+        //        graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        //        using (var wrapMode = new ImageAttributes())
+        //        {
+        //            wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+        //            graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+        //        }
+        //    }
+        //    return await Task.Run(() => resultImage);
+        //}
     }
 }

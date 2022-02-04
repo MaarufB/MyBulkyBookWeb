@@ -67,19 +67,19 @@ namespace BulkyBook.DataAccess.Repository
                 {
                     query = query.Include(property);
                 }
-
             }
+
             return query.FirstOrDefault(); //FirstOrDefault(); // To eleminate the warning the best approach to use is query.First()
         }
 
         public async Task RemoveAsync(T entity)
         {
-            dbSet.Remove(entity);
+            await Task.Run(() => dbSet.Remove(entity));
         }
 
         public async Task RemoveRangeAsync(IEnumerable<T> entity)
         {
-            dbSet.RemoveRange(entity);
+            await Task.Run(() => dbSet.RemoveRange(entity));
         }
     }
 }

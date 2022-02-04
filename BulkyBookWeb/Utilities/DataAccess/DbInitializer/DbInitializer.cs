@@ -39,7 +39,7 @@ namespace BulkyBook.DataAccess.DbInitializer
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.ToString());
             }
 
             //create roles if they are not created
@@ -64,7 +64,7 @@ namespace BulkyBook.DataAccess.DbInitializer
                     City = "Chicago"
                 }, "@Admin123").GetAwaiter().GetResult();
 
-                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "maarufskyland1231@gmail.com");
+                ApplicationUser? user = _db?.ApplicationUsers?.FirstOrDefault(u => u.Email == "maarufskyland1231@gmail.com");
 
                 _userManager.AddToRoleAsync(user, SD.Role_Admin).GetAwaiter().GetResult();
 

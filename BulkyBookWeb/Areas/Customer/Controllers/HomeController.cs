@@ -73,7 +73,7 @@ namespace BulkyBook.Controllers
             }
             else
             {
-                _unitOfWork.ShoppingCart.IncrementCount(cartFromDb, shoppingCart.Count);
+               await _unitOfWork.ShoppingCart.IncrementCount(cartFromDb, shoppingCart.Count);
                 await _unitOfWork.SaveAsync();
             }
 

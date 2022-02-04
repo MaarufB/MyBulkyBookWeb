@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "WJlddzFQqMVYKtLP2INn0lEKmYzr/djPpykprHdP83XKoq3oxlCgUAb6DaDrlVmfJxmbsm7TV8D1Z4Mx+ZU4Iw==",
+  "dgSpecHash": "FL9i2GU/nSKZhSp+4TFWWw7xLNvVvpgdbQZEDDBSF9vzobZsQ1ZwO7M5KA9uxTFHWDlWkYB+8RzXvdOTacaDRQ==",
   "success": true,
   "projectFilePath": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\BulkyBookWeb.csproj",
   "expectedPackageFiles": [
@@ -113,6 +113,7 @@
     "C:\\Users\\SKYLAND-14\\.nuget\\packages\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\SKYLAND-14\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\SKYLAND-14\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
+    "C:\\Users\\SKYLAND-14\\.nuget\\packages\\sixlabors.imagesharp\\1.0.4\\sixlabors.imagesharp.1.0.4.nupkg.sha512",
     "C:\\Users\\SKYLAND-14\\.nuget\\packages\\stripe.net\\39.84.0\\stripe.net.39.84.0.nupkg.sha512",
     "C:\\Users\\SKYLAND-14\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
     "C:\\Users\\SKYLAND-14\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",

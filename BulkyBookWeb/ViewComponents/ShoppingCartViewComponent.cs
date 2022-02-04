@@ -18,7 +18,7 @@ namespace BulkyBookWeb.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claimsIdentity = (ClaimsIdentity?)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             if (claim != null)
             {
@@ -36,7 +36,7 @@ namespace BulkyBookWeb.ViewComponents
             else
             {
                 HttpContext.Session.Clear();
-                return View(0);
+                return await Task.Run(() => View(0));
             }
         }
     }
