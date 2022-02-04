@@ -65,7 +65,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             else
             {
                 //update product
-                company = _unitOfWork.Company.GetFirstOrDefault(u => u.Id == id);
+                company = _unitOfWork.Company.GetFirstOrDefaultAsync(u => u.Id == id);
                 return View(company);
             }
 
@@ -106,14 +106,14 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var companyList = _unitOfWork.Company.GetAll();
+            var companyList = _unitOfWork.Company.GetAllAsync();
             return Json(new { data = companyList });
         }
 
         [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            var obj = _unitOfWork.Company.GetFirstOrDefault(c => c.Id == id);
+            var obj = _unitOfWork.Company.GetFirstOrDefaultAsync(c => c.Id == id);
 
             if (obj == null) return Json(new {success = false, message="Error while deleting"});
 

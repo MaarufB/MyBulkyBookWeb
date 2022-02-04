@@ -22,7 +22,7 @@ namespace BulkyBook.Controllers
         public IActionResult Index()
         {
 
-            var objCategoryList = _unitOfWork.Category.GetAll();//ToListAsync();
+            var objCategoryList = _unitOfWork.Category.GetAllAsync();//ToListAsync();
 
             return View(objCategoryList);
         }
@@ -67,7 +67,7 @@ namespace BulkyBook.Controllers
             if (id == null || id == 0) return NotFound();
 
             //var categoryFromDB = _db.Categories.Find(id);
-            var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
+            var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefaultAsync(c => c.Id == id);
             //var categoryFromDbSingleOrDefault = _db.Categories.SingleOrDefault(c => c.Id == id);
 
             // You can use single or singleordefault. SingleOrDefault will return empty if the id is not found. The single will throw an error if the id is not found
@@ -83,7 +83,7 @@ namespace BulkyBook.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken] // Watch the video for more details about AntiForgeToken on dotnetmaster.com
-        public IActionResult Edit(Category obj)
+        public async Task<IActionResult> Edit(Category obj)
         {
             // This is a custom Error
             if (obj.Name == obj.DisplayOrder.ToString())
@@ -95,13 +95,13 @@ namespace BulkyBook.Controllers
             if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Update(obj);
-                _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
 
             }
 
-            return View(obj);
+            return await Task.Run(() => View(obj));
         }
 
 
@@ -113,7 +113,7 @@ namespace BulkyBook.Controllers
         {
             if (id == null || id == 0) return NotFound();
 
-            var categoryFromDBFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id); //_db.Categories.Find(id);
+            var categoryFromDBFirst = _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id); //_db.Categories.Find(id);
 
             if (categoryFromDBFirst == null) return NotFound();
 
@@ -126,8 +126,8 @@ namespace BulkyBook.Controllers
         public IActionResult DeletePost(int? id)
         {
             // This is a custom Error
-            var obj = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
-
+            var obj = _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id);
+            
 
             if (obj == null) return NotFound();
 

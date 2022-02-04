@@ -27,7 +27,7 @@ namespace BulkyBook.DataAccess.Repository
             await dbSet.AddAsync(entity);
         }
         // inludeProp - "Category, CoverType"
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter=null, string? includeProperties = null)
+        public IEnumerable<T> GetAllAsync(Expression<Func<T, bool>>? filter=null, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
             if(filter != null)
@@ -42,10 +42,10 @@ namespace BulkyBook.DataAccess.Repository
                     query = query.Include(property);
                 }
             }
-            return query.ToList(); 
+            return  query.ToList(); 
         }
 
-        public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true)
+        public T GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true)
         {
             IQueryable<T> query;
 
@@ -67,8 +67,9 @@ namespace BulkyBook.DataAccess.Repository
                 {
                     query = query.Include(property);
                 }
+
             }
-            return query.FirstOrDefault(); // To eleminate the warning the best approach to use is query.First()
+            return query.FirstOrDefault(); //FirstOrDefault(); // To eleminate the warning the best approach to use is query.First()
         }
 
         public async Task RemoveAsync(T entity)

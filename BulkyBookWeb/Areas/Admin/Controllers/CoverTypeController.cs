@@ -18,7 +18,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var objCoverTypeList = _unitOfWork.CoverType.GetAll();
+            var objCoverTypeList = _unitOfWork.CoverType.GetAllAsync();
 
             return View(objCoverTypeList);
         }
@@ -50,7 +50,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             if (id == null || id == 0) return NotFound();
 
-            var coverTypeFromDbFirst = _unitOfWork.CoverType.GetFirstOrDefault(c => c.Id == id);
+            var coverTypeFromDbFirst = _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id);
 
             if (coverTypeFromDbFirst == null) return NotFound();
 
@@ -79,7 +79,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             if (id == null || id == 0) return NotFound();
 
-            var coverTypeFromDBFirst = _unitOfWork.CoverType.GetFirstOrDefault(c => c.Id == id);
+            var coverTypeFromDBFirst = _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id);
 
             if (coverTypeFromDBFirst == null) return NotFound();
 
@@ -90,7 +90,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var obj = _unitOfWork.CoverType.GetFirstOrDefault(c => c.Id == id);
+            var obj = _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id);
 
             if (obj == null) return NotFound();
 

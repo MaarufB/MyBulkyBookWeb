@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BulkyBook.Utility;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
@@ -57,12 +60,12 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             ProductVM productVM = new()
             {
                 Product = new(),
-                CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                CategoryList = _unitOfWork.Category.GetAllAsync().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
                 }),
-                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
+                CoverTypeList = _unitOfWork.CoverType.GetAllAsync().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
@@ -78,7 +81,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             else
             {
                 //update product
-                productVM.Product = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+                productVM.Product = _unitOfWork.Product.GetFirstOrDefaultAsync(u => u.Id == id);
                 return View(productVM);
             }
 
@@ -98,6 +101,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                     var fileName = Guid.NewGuid().ToString();
                     var uploads = tempPath;  // Path.Combine(tempPath, @"images\products");
                     var extention = Path.GetExtension(file.FileName);
+                    var saveFile = Path.Combine(uploads, fileName+ extention);
                    
                     if (obj.Product.ImageUrl != null)
                     {
@@ -108,16 +112,19 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                         }
                     }
 
-                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extention), FileMode.Create))
+                    using (var fileStreams = new FileStream(saveFile, FileMode.Create))
                     {
-                        await file.CopyToAsync(fileStreams);
+                        await file.CopyToAsync(fileStreams); 
                     }
 
-                    byte[] imageArray = System.IO.File.ReadAllBytes(Path.Combine(uploads, fileName + extention));
-
-                    string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+                    var bitmapImage = new Bitmap(saveFile);
+                    var resizeImage = await ResizeImage(bitmapImage, 300, 300);
+                    var imageArray = await ImageToByte(resizeImage);
+                    // byte[] imageArray = System.IO.File.ReadAllBytes(Path.Combine(uploads, fileName + extention));
+                    string base64ImageRepresentation = Convert.ToBase64String(imageArray); //imageArray
 
                     obj.Product.ImageUrl = $"data:image/{extention};base64,{base64ImageRepresentation}"; //@"\images\products\" + fileName + extention;
+
                 }
 
                 if(obj.Product.Id == 0)
@@ -131,7 +138,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
                 await _unitOfWork.SaveAsync();
                 TempData["success"] = "Product created successfully!";
-
+                
                 return RedirectToAction("Index");
             }
 
@@ -155,14 +162,14 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var productList = _unitOfWork.Product.GetAll(includeProperties:"Category,CoverType");
+            var productList = _unitOfWork.Product.GetAllAsync(includeProperties:"Category,CoverType");
             return Json(new { data = productList });
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
-            var obj = _unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);
+            var obj = _unitOfWork.Product.GetFirstOrDefaultAsync(c => c.Id == id);
 
             if (obj == null) return Json(new {success = false, message="Error while deleting"});
 
@@ -180,5 +187,40 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         }
 
         #endregion
+
+
+        public async Task<byte[]> ImageToByte(Image? img)
+        {
+            ImageConverter converter = new ImageConverter();
+            byte[]? data = null;
+
+            if (img is not null)
+            {
+                data = (byte[]?)converter.ConvertTo(img, typeof(byte[]));
+            }
+
+            return await Task.Run(() => data);
+        }
+
+        public async Task<Bitmap> ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var resultImage = new Bitmap(width, height);
+            resultImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+            using (var graphics = Graphics.FromImage(resultImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+            return await Task.Run(() => resultImage);
+        }
     }
 }

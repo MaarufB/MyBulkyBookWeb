@@ -30,8 +30,8 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             orderVM = new()
             {
-                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderId, includeProperties: "ApplicationUser"),
-                OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == orderId, includeProperties: "Product"),
+                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetail = _unitOfWork.OrderDetail.GetAllAsync(u => u.OrderId == orderId, includeProperties: "Product"),
             };
 
             return View(orderVM);
@@ -42,8 +42,8 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Details_PAY_NOW()
         {
-            orderVM.OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
-            orderVM.OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == orderVM.OrderHeader.Id, includeProperties: "Product");
+            orderVM.OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
+            orderVM.OrderDetail = _unitOfWork.OrderDetail.GetAllAsync(u => u.OrderId == orderVM.OrderHeader.Id, includeProperties: "Product");
 
 
             //Stripe Setting 
@@ -95,7 +95,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public IActionResult PaymentConfirmation(int orderHeaderid)
         {
-            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderHeaderid);
+            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderHeaderid);
 
 
             if (orderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
@@ -116,7 +116,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
 
 
-            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            var shoppingCarts = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
 
 
             _unitOfWork.ShoppingCart.RemoveRangeAsync(shoppingCarts);
@@ -132,7 +132,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdateOrderDetail(int orderId)
         {
-            var orderHeaderFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderVM.OrderHeader.Id, tracked:false);
+            var orderHeaderFromDb = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, tracked:false);
             orderHeaderFromDb.Name = orderVM.OrderHeader.Name;
             orderHeaderFromDb.PhoneNumber = orderVM.OrderHeader.PhoneNumber;
             orderHeaderFromDb.StreetAddress = orderVM.OrderHeader.StreetAddress;
@@ -175,7 +175,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ShipOrder(int orderId)
         {
-            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u=>u.Id==orderVM.OrderHeader.Id, tracked: false);
+            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u=>u.Id==orderVM.OrderHeader.Id, tracked: false);
             orderHeader.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
             orderHeader.Carrier = orderVM.OrderHeader.Carrier;
             orderHeader.OrderStatus = SD.StatusShipped;
@@ -198,7 +198,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CancelOrder(int orderId)
         {
-            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderVM.OrderHeader.Id, tracked: false);
+            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, tracked: false);
             if(orderHeader.PaymentStatus == SD.PaymentStatusApproved)
             {
                 var options = new RefundCreateOptions
@@ -230,14 +230,14 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             IEnumerable<OrderHeader> orderHeaders;
             if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
             {
-                orderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
+                orderHeaders = _unitOfWork.OrderHeader.GetAllAsync(includeProperties: "ApplicationUser");
             }
             else 
             {
                 var claimsIdentity = (ClaimsIdentity?)User.Identity;
                 var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-                orderHeaders = _unitOfWork.OrderHeader.GetAll(u => u.ApplicationUserId == claim.Value, includeProperties: "ApplicationUser");
+                orderHeaders = _unitOfWork.OrderHeader.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "ApplicationUser");
             }            
             
             switch (status)

@@ -23,7 +23,7 @@ namespace BulkyBook.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+            IEnumerable<Product> productList = _unitOfWork.Product.GetAllAsync(includeProperties: "Category,CoverType");
             return View(productList); 
         }
 
@@ -45,7 +45,7 @@ namespace BulkyBook.Controllers
             {
                 Count = 1,
                 ProductId = productId,
-                Product = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == productId, includeProperties: "Category,CoverType"),
+                Product = _unitOfWork.Product.GetFirstOrDefaultAsync(u => u.Id == productId, includeProperties: "Category,CoverType"),
             };
 
             return View(cartObj);
@@ -60,7 +60,7 @@ namespace BulkyBook.Controllers
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             shoppingCart.ApplicationUserId = claim.Value;
 
-            var cartFromDb = _unitOfWork.ShoppingCart.GetFirstOrDefault(
+            var cartFromDb = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(
                                   u => u.ApplicationUserId == claim.Value && 
                                   u.ProductId == shoppingCart.ProductId);
 
@@ -69,7 +69,7 @@ namespace BulkyBook.Controllers
                 await _unitOfWork.ShoppingCart.AddAsync(shoppingCart);
                 await _unitOfWork.SaveAsync();
                 HttpContext.Session.SetInt32(SD.SessionCart,
-                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
+                    _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == claim.Value).ToList().Count);
             }
             else
             {

@@ -33,7 +33,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
             shoppingCartVM = new ShoppingCartVM()
             {
-                ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value, includeProperties: "Product"),
+                ListCart = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "Product"),
                 OrderHeader = new()
             };
             foreach(var cart in shoppingCartVM.ListCart)
@@ -53,11 +53,11 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
             shoppingCartVM = new ShoppingCartVM()
             {
-                ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId== claim.Value, includeProperties: "Product"),
+                ListCart = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId== claim.Value, includeProperties: "Product"),
                 OrderHeader= new()
             };
             
-            shoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(
+            shoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefaultAsync(
                 u => u.Id==claim.Value);
              shoppingCartVM.OrderHeader.Name = shoppingCartVM.OrderHeader.ApplicationUser.Name;
             shoppingCartVM.OrderHeader.PhoneNumber = shoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
@@ -83,7 +83,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity?)User.Identity;
             var claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
             
-            shoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value, includeProperties: "Product");
+            shoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "Product");
 
             shoppingCartVM.OrderHeader.OrderDate = System.DateTime.Now;
             shoppingCartVM.OrderHeader.ApplicationUserId = claim.Value;
@@ -94,7 +94,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 shoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
-            var applicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == claim.Value);
+            var applicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefaultAsync(u => u.Id == claim.Value);
             if(applicationUser.CompanyId.GetValueOrDefault() == 0)
             {
                 shoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
@@ -178,7 +178,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation(int id)
         {
-            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id, includeProperties: "ApplicationUser");
+            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == id, includeProperties: "ApplicationUser");
           
 
             if(orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
@@ -195,7 +195,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
             _emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, "New Order - Bulky Book", "<p>New Order Created</p>");      
            
-            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u=>u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            var shoppingCarts = _unitOfWork.ShoppingCart.GetAllAsync(u=>u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
             HttpContext.Session.Clear();
             _unitOfWork.ShoppingCart.RemoveRangeAsync(shoppingCarts);
             _unitOfWork.SaveAsync();
@@ -206,20 +206,20 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
         public IActionResult Plus(int cartId)
         {
-            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id == cartId);
             _unitOfWork.ShoppingCart.IncrementCount(cart, 1);
             _unitOfWork.SaveAsync();
             
             return RedirectToAction(nameof(Index));    
         }
 
-        public IActionResult Minus(int cartId)
+        public async Task<IActionResult> Minus(int cartId)
         {
-            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id==cartId);
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id==cartId);
             if(cart.Count <= 1)
             {
-                _unitOfWork.ShoppingCart.RemoveAsync(cart);
-                var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count - 1;
+                await _unitOfWork.ShoppingCart.RemoveAsync(cart);
+                var count =  _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count - 1;
                 HttpContext.Session.SetInt32(SD.SessionCart, count);
             }
             else
@@ -234,11 +234,15 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
         public IActionResult Remove(int cartId)
         {
-            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id == cartId);
             _unitOfWork.ShoppingCart.RemoveAsync(cart);
             _unitOfWork.SaveAsync();
 
-            var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count;
+            //var count2 = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == cart.ApplicationUserId);
+
+
+            var count = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count;
+
             HttpContext.Session.SetInt32(SD.SessionCart, count);
              
             return RedirectToAction(nameof(Index));

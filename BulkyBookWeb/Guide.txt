@@ -1,3 +1,4 @@
 ﻿UNIT OF WORK
 	- The Unit Of Work class coordinates the work of multiple repositories by creating a single database context class shared by all of them
 
+	https://stackoverflow.com/questions/45227745/returning-a-view-with-async-keyword/45227871

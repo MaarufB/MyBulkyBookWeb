@@ -29,7 +29,7 @@ namespace BulkyBookWeb.ViewComponents
                 else
                 {
                     HttpContext.Session.SetInt32(SD.SessionCart,
-                        _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).ToList().Count);
+                        _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == claim.Value).ToList().Count);
                     return View(HttpContext.Session.GetInt32(SD.SessionCart));
                 }
             }
