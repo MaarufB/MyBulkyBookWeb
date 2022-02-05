@@ -58,34 +58,34 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return View(obj);
         }
 
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
             ProductVM productVM = new()
             {
                 Product = new(),
-                CategoryList = _unitOfWork.Category.GetAllAsync().Select(i => new SelectListItem
+                CategoryList = await Task.Run(() => _unitOfWork.Category.GetAllAsync().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
-                }),
-                CoverTypeList = _unitOfWork.CoverType.GetAllAsync().Select(i => new SelectListItem
+                })),
+                CoverTypeList = await Task.Run(() => _unitOfWork.CoverType.GetAllAsync().Select(i => new SelectListItem
                 {
                     Text = i.Name,
                     Value = i.Id.ToString()
-                })
+                }))
             };
 
             if (id == null || id == 0)
             {
                 // create product
 
-                return View(productVM);
+                return await Task.Run(() => View(productVM));
             }
             else
             {
                 //update product
-                productVM.Product = _unitOfWork.Product.GetFirstOrDefaultAsync(u => u.Id == id);
-                return View(productVM);
+                productVM.Product = await Task.Run(() => _unitOfWork.Product.GetFirstOrDefaultAsync(u => u.Id == id));
+                return await Task.Run(() => View(productVM));
             }
 
         }
@@ -111,7 +111,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                         var oldImagePath = Path.Combine(tempPath, obj.Product.ImageUrl.Trim('\\'));
                         if (System.IO.File.Exists(oldImagePath))
                         {
-                            System.IO.File.Delete(oldImagePath);
+                            await Task.Run(() => System.IO.File.Delete(oldImagePath));
                         }
                     }
 
@@ -144,16 +144,16 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 }
                 else
                 {
-                     _unitOfWork.Product.Update(obj.Product);
+                     await Task.Run(() => _unitOfWork.Product.Update(obj.Product));
                 }
 
                 await _unitOfWork.SaveAsync();
                 TempData["success"] = "Product created successfully!";
                 
-                return RedirectToAction("Index");
+                return await Task.Run(() => RedirectToAction("Index"));
             }
 
-            return View(obj);
+            return await Task.Run(()=> View(obj));
         }
 
         //public IActionResult Delete(int? id)
@@ -171,29 +171,29 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         #region API CALLS
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var productList = _unitOfWork.Product.GetAllAsync(includeProperties:"Category,CoverType");
-            return Json(new { data = productList });
+            var productList = await Task.Run(() => _unitOfWork.Product.GetAllAsync(includeProperties:"Category,CoverType"));
+            return await Task.Run(() => Json(new { data = productList }));
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
-            var obj = _unitOfWork.Product.GetFirstOrDefaultAsync(c => c.Id == id);
+            var obj = await Task.Run(() =>_unitOfWork.Product.GetFirstOrDefaultAsync(c => c.Id == id));
 
-            if (obj == null) return Json(new {success = false, message="Error while deleting"});
+            if (obj == null) return await Task.Run(() => Json(new {success = false, message="Error while deleting"}));
 
             var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, obj.ImageUrl.Trim('\\'));
             if (System.IO.File.Exists(oldImagePath))
             {
-                System.IO.File.Delete(oldImagePath);
+                await Task.Run(() => System.IO.File.Delete(oldImagePath));
             }
 
             await _unitOfWork.Product.RemoveAsync(obj);
             await _unitOfWork.SaveAsync();
 
-            return Json(new {success = true, message = "Product successfully deleted"});
+            return await Task.Run(() => Json(new {success = true, message = "Product successfully deleted"}));
 
         }
 

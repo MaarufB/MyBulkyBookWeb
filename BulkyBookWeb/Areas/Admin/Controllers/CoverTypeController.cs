@@ -16,37 +16,37 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var objCoverTypeList = _unitOfWork.CoverType.GetAllAsync();
 
-            return View(objCoverTypeList);
+            return await Task.Run(() => View(objCoverTypeList));
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            return await Task.Run(() => View());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CoverType obj)
+        public async Task<IActionResult> Create(CoverType obj)
         {
             if (!ModelState.IsValid) ModelState.AddModelError("name", "Cover Type name is not valid");
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.CoverType.AddAsync(obj);
-                _unitOfWork.SaveAsync();
+                await _unitOfWork.CoverType.AddAsync(obj);
+                await _unitOfWork.SaveAsync();
                 TempData["success"] = "Cover Type created successfully!";
 
-                return RedirectToAction("Index");
+                return await Task.Run(() => RedirectToAction("Index"));
             }
 
-            return View(obj);
+            return await Task.Run(() => View(obj));
         }
 
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || id == 0) return NotFound();
 
@@ -54,51 +54,51 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             if (coverTypeFromDbFirst == null) return NotFound();
 
-            return View(coverTypeFromDbFirst);
+            return await Task.Run(() => View(coverTypeFromDbFirst));
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(CoverType obj)
+        public async Task<IActionResult> Edit(CoverType obj)
         {
             if (!ModelState.IsValid) ModelState.AddModelError("name", "Cover Type is not valid");
             if (ModelState.IsValid)
             {
                 _unitOfWork.CoverType.Update(obj);
-                _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();
                 TempData["success"] = "Cover Type update successfully!";
 
-                return RedirectToAction("Index");
+                return await Task.Run(() => RedirectToAction("Index"));
             }
 
-            return View(obj);
+            return await Task.Run(() => View(obj));
         }
 
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || id == 0) return NotFound();
 
-            var coverTypeFromDBFirst = _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id);
+            var coverTypeFromDBFirst = await Task.Run(() => _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id));
 
             if (coverTypeFromDBFirst == null) return NotFound();
 
-            return View(coverTypeFromDBFirst);
+            return await Task.Run(() => View(coverTypeFromDBFirst));
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePost(int? id)
+        public async Task<IActionResult> DeletePost(int? id)
         {
             var obj = _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id);
 
             if (obj == null) return NotFound();
 
-            _unitOfWork.CoverType.RemoveAsync(obj);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.CoverType.RemoveAsync(obj);
+            await _unitOfWork.SaveAsync();
             TempData["success"] = "Cover Type deleted successfully!";
 
-            return RedirectToAction("Index");
+            return await Task.Run(() => RedirectToAction("Index"));
 
         }
     }

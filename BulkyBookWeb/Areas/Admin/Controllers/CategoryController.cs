@@ -19,20 +19,19 @@ namespace BulkyBook.Controllers
             _unitOfWork  = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult>Index()
         {
-
             var objCategoryList = _unitOfWork.Category.GetAllAsync();//ToListAsync();
 
-            return View(objCategoryList);
+            return await Task.Run(() => View(objCategoryList));
         }
 
 
         //GET
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
 
-            return View();
+            return await Task.Run(() => View());
         }
 
 
@@ -62,7 +61,7 @@ namespace BulkyBook.Controllers
         }
 
         // GET method to render the view for edit controller
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || id == 0) return NotFound();
 
@@ -77,7 +76,7 @@ namespace BulkyBook.Controllers
 
             if (categoryFromDbFirst == null) return NotFound();
             
-            return View(categoryFromDbFirst);
+            return await Task.Run(() =>View(categoryFromDbFirst));
         }
 
         //POST
@@ -109,7 +108,7 @@ namespace BulkyBook.Controllers
 
 
         // GET method to render the view for Delete controller
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || id == 0) return NotFound();
 
@@ -117,13 +116,13 @@ namespace BulkyBook.Controllers
 
             if (categoryFromDBFirst == null) return NotFound();
 
-            return View(categoryFromDBFirst);
+            return await Task.Run(() => View(categoryFromDBFirst));
         }
 
         //POST
         [HttpPost, ActionName("Delete")] // The reason for that is we change the asp-action value to Delete instead of DeletePost
         [ValidateAntiForgeryToken] // Watch the video for more details about AntiForgeToken on dotnetmaster.com
-        public IActionResult DeletePost(int? id)
+        public async Task<IActionResult> DeletePost(int? id)
         {
             // This is a custom Error
             var obj = _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id);
@@ -131,11 +130,11 @@ namespace BulkyBook.Controllers
 
             if (obj == null) return NotFound();
 
-            _unitOfWork.Category.RemoveAsync(obj);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.Category.RemoveAsync(obj);
+            await _unitOfWork.SaveAsync();
             TempData["success"] = "Category deleted successfully";
 
-            return RedirectToAction("Index");
+            return await Task.Run(() => RedirectToAction("Index"));
         }
     }
 }

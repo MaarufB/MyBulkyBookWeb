@@ -21,12 +21,12 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return await Task.Run(() => View());
         }
 
-        public IActionResult Details(int orderId)
+        public async Task<IActionResult> Details(int orderId)
         {
             orderVM = new()
             {
@@ -34,13 +34,13 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 OrderDetail = _unitOfWork.OrderDetail.GetAllAsync(u => u.OrderId == orderId, includeProperties: "Product"),
             };
 
-            return View(orderVM);
+            return await Task.Run(() => View(orderVM));
         }
 
         [ActionName("Details")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Details_PAY_NOW()
+        public async Task<IActionResult> Details_PAY_NOW()
         {
             orderVM.OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
             orderVM.OrderDetail = _unitOfWork.OrderDetail.GetAllAsync(u => u.OrderId == orderVM.OrderHeader.Id, includeProperties: "Product");
@@ -82,18 +82,18 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             var service = new SessionService();
 
-            var session = service.Create(options);
+            var session = await service.CreateAsync(options);
 
             orderVM.OrderHeader.SessionId = session.Id;
             orderVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
             _unitOfWork.OrderHeader.UpdateStripePaymentID(orderVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
-            _unitOfWork.SaveAsync();
+           await  _unitOfWork.SaveAsync();
             Response.Headers.Add("Location", session.Url);
          
             return new StatusCodeResult(303);
         }
 
-        public IActionResult PaymentConfirmation(int orderHeaderid)
+        public async Task<IActionResult> PaymentConfirmation(int orderHeaderid)
         {
             var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderHeaderid);
 
@@ -101,7 +101,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             if (orderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
             {
                 var service = new SessionService();
-                var session = service.Get(orderHeader.SessionId);
+                var session = await service.GetAsync(orderHeader.SessionId);
                 var orderHeaderIsNull = orderHeader.OrderStatus;
                 // Check the stripe status
                 // To elminate the warning for null
@@ -110,7 +110,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
                     _unitOfWork.OrderHeader.UpdateStatus(orderHeaderid, orderStatus, SD.PaymentStatusApproved);
-                    _unitOfWork.SaveAsync();
+                    await _unitOfWork.SaveAsync();
                 }
             }
 
@@ -119,10 +119,10 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             var shoppingCarts = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
 
 
-            _unitOfWork.ShoppingCart.RemoveRangeAsync(shoppingCarts);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.ShoppingCart.RemoveRangeAsync(shoppingCarts);
+            await _unitOfWork.SaveAsync();
 
-            return View(orderHeaderid);
+            return await Task.Run(() => View(orderHeaderid));
 
         }
 
@@ -130,7 +130,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateOrderDetail(int orderId)
+        public async Task<IActionResult> UpdateOrderDetail(int orderId)
         {
             var orderHeaderFromDb = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, tracked:false);
             orderHeaderFromDb.Name = orderVM.OrderHeader.Name;
@@ -149,31 +149,31 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 orderHeaderFromDb.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
             }
             _unitOfWork.OrderHeader.Update(orderHeaderFromDb);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync();
 
             TempData["Success"] = "Order Details Upated Successfully!";
 
 
-            return RedirectToAction("Details", "Order", new { orderId = orderHeaderFromDb.Id });
+            return await Task.Run(() => RedirectToAction("Details", "Order", new { orderId = orderHeaderFromDb.Id }));
         }
 
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
-        public IActionResult StartProcessing(int orderId)
+        public async Task<IActionResult> StartProcessing(int orderId)
         {
             _unitOfWork.OrderHeader.UpdateStatus(orderVM.OrderHeader.Id, SD.StatusInProcess);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Status Upated Successfully!";
 
-            return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
+            return await Task.Run(() => RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id }));
         }
 
 
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
-        public IActionResult ShipOrder(int orderId)
+        public async Task<IActionResult> ShipOrder(int orderId)
         {
             var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u=>u.Id==orderVM.OrderHeader.Id, tracked: false);
             orderHeader.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
@@ -187,16 +187,16 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
 
             _unitOfWork.OrderHeader.Update(orderHeader);  
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Shipped Successfully!";
 
-            return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
+            return await Task.Run(() => RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id }));
         }
 
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
-        public IActionResult CancelOrder(int orderId)
+        public async Task<IActionResult> CancelOrder(int orderId)
         {
             var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, tracked: false);
             if(orderHeader.PaymentStatus == SD.PaymentStatusApproved)
@@ -208,7 +208,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 };
 
                 var service = new RefundService();
-                var refund = service.Create(options);
+                var refund = await service.CreateAsync(options);
                 
                 _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded);
             }
@@ -217,15 +217,15 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
             }
 
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Cancelled Successfully!";
 
-            return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
+            return await Task.Run(() => RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id }));
         }
 
         #region API CALLS
         [HttpGet]
-        public IActionResult GetAll(string? status)
+        public async Task<IActionResult> GetAll(string? status)
         {
             IEnumerable<OrderHeader> orderHeaders;
             if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
@@ -259,7 +259,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                     break;
             }
 
-            return Json(new {data = orderHeaders});
+            return await Task.Run(() => Json(new {data = orderHeaders}));
         }
         #endregion
     }

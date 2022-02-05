@@ -26,34 +26,34 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
         }
 
         //[AllowAnonymous]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var claimsIdentity = (ClaimsIdentity?)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var claim = await Task.Run(() => claimsIdentity.FindFirst(ClaimTypes.NameIdentifier));
 
             shoppingCartVM = new ShoppingCartVM()
             {
-                ListCart = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "Product"),
+                ListCart = await Task.Run(() => _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "Product")),
                 OrderHeader = new()
             };
             foreach(var cart in shoppingCartVM.ListCart)
             {
-                cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
+                cart.Price = await GetPriceBasedOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
                 shoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
 
-            return View(shoppingCartVM);
+            return await Task.Run(() => View(shoppingCartVM));
         }
 
-        public IActionResult Summary()
+        public async Task<IActionResult> Summary()
         {
             var claimsIdentity = (ClaimsIdentity?)User.Identity;
-            var claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
+            var claim = await Task.Run(() => claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier));
 
             shoppingCartVM = new ShoppingCartVM()
             {
-                ListCart = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId== claim.Value, includeProperties: "Product"),
+                ListCart = await Task.Run(() => _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId== claim.Value, includeProperties: "Product")),
                 OrderHeader= new()
             };
             
@@ -68,33 +68,33 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
             foreach (var cart in shoppingCartVM.ListCart)
             {
-                cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
+                cart.Price = await GetPriceBasedOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
                 shoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
-            return View(shoppingCartVM);
+            return await Task.Run(() => View(shoppingCartVM));
         }
 
         [HttpPost]
         [ActionName("Summary")]
         [ValidateAntiForgeryToken]
-        public IActionResult SummaryPOST()
+        public async Task<IActionResult> SummaryPOST()
         {
             var claimsIdentity = (ClaimsIdentity?)User.Identity;
-            var claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
+            var claim = await Task.Run(() => claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier));
             
-            shoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "Product");
+            shoppingCartVM.ListCart = await Task.Run(() => _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "Product"));
 
             shoppingCartVM.OrderHeader.OrderDate = System.DateTime.Now;
             shoppingCartVM.OrderHeader.ApplicationUserId = claim.Value;
 
             foreach (var cart in shoppingCartVM.ListCart)
             {
-                cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
+                cart.Price = await GetPriceBasedOnQuantity(cart.Count, cart.Product.Price, cart.Product.Price50, cart.Product.Price100);
                 shoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
-            var applicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefaultAsync(u => u.Id == claim.Value);
+            var applicationUser = await Task.Run(() => _unitOfWork.ApplicationUser.GetFirstOrDefaultAsync(u => u.Id == claim.Value));
             if(applicationUser.CompanyId.GetValueOrDefault() == 0)
             {
                 shoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
@@ -105,8 +105,8 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 shoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPayment;
                 shoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;
             }
-            _unitOfWork.OrderHeader.AddAsync(shoppingCartVM.OrderHeader);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.OrderHeader.AddAsync(shoppingCartVM.OrderHeader);
+            await _unitOfWork.SaveAsync();
 
             foreach (var cart in shoppingCartVM.ListCart)
             {
@@ -117,8 +117,8 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                     Price = cart.Price,
                     Count = cart.Count
                 };
-                _unitOfWork.OrderDetail.AddAsync(orderDetail);
-                _unitOfWork.SaveAsync();
+               await _unitOfWork.OrderDetail.AddAsync(orderDetail);
+                await _unitOfWork.SaveAsync();
             }
 
             if (applicationUser.CompanyId.GetValueOrDefault() == 0)
@@ -164,62 +164,62 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
                 shoppingCartVM.OrderHeader.SessionId = session.Id;
                 shoppingCartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
-                _unitOfWork.OrderHeader.UpdateStripePaymentID(shoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
-                _unitOfWork.SaveAsync();
+                await Task.Run(() => _unitOfWork.OrderHeader.UpdateStripePaymentID(shoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId));
+                await _unitOfWork.SaveAsync();
                 Response.Headers.Add("Location", session.Url);
                 return new StatusCodeResult(303);
             }
             else
             {
-                return RedirectToAction("OrderConfirmation", "Cart", new { Id = shoppingCartVM.OrderHeader.Id });
+                return await Task.Run(() => RedirectToAction("OrderConfirmation", "Cart", new { Id = shoppingCartVM.OrderHeader.Id }));
             }
 
         }
 
-        public IActionResult OrderConfirmation(int id)
+        public async Task<IActionResult> OrderConfirmation(int id)
         {
-            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == id, includeProperties: "ApplicationUser");
+            var orderHeader = await Task.Run(() => _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == id, includeProperties: "ApplicationUser"));
           
 
             if(orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
             {
                 var service = new SessionService();
-                var session = service.Get(orderHeader.SessionId);
+                var session = await service.GetAsync(orderHeader.SessionId);
                 // Check the stripe status
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
-                    _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
-                    _unitOfWork.SaveAsync();
+                    await Task.Run(() => _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved));
+                    await _unitOfWork.SaveAsync();
                 }
             }
 
-            _emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, "New Order - Bulky Book", "<p>New Order Created</p>");      
+            await _emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, "New Order - Bulky Book", "<p>New Order Created</p>");      
            
-            var shoppingCarts = _unitOfWork.ShoppingCart.GetAllAsync(u=>u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            var shoppingCarts = await Task.Run(() => _unitOfWork.ShoppingCart.GetAllAsync(u=>u.ApplicationUserId == orderHeader.ApplicationUserId).ToList());
             HttpContext.Session.Clear();
-            _unitOfWork.ShoppingCart.RemoveRangeAsync(shoppingCarts);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.ShoppingCart.RemoveRangeAsync(shoppingCarts);
+            await _unitOfWork.SaveAsync();
 
-            return View(id);
+            return await Task.Run(() => View(id));
 
         }
 
-        public IActionResult Plus(int cartId)
+        public async Task<IActionResult> Plus(int cartId)
         {
-            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id == cartId);
-            _unitOfWork.ShoppingCart.IncrementCount(cart, 1);
-            _unitOfWork.SaveAsync();
+            var cart = await Task.Run(() => _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id == cartId));
+            await _unitOfWork.ShoppingCart.IncrementCount(cart, 1);
+            await _unitOfWork.SaveAsync();
             
-            return RedirectToAction(nameof(Index));    
+            return await Task.Run(() => RedirectToAction(nameof(Index)));    
         }
 
         public async Task<IActionResult> Minus(int cartId)
         {
-            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id==cartId);
+            var cart = await Task.Run(() => _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id==cartId));
             if(cart.Count <= 1)
             {
                 await _unitOfWork.ShoppingCart.RemoveAsync(cart);
-                var count =  _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count - 1;
+                var count =  await Task.Run(() => _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count - 1);
                 HttpContext.Session.SetInt32(SD.SessionCart, count);
             }
             else
@@ -229,38 +229,38 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
             await _unitOfWork.SaveAsync();
              
-            return RedirectToAction(nameof(Index));
+            return await Task.Run(() => RedirectToAction(nameof(Index)));
         }
 
-        public IActionResult Remove(int cartId)
+        public async Task<IActionResult> Remove(int cartId)
         {
             var cart = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id == cartId);
-            _unitOfWork.ShoppingCart.RemoveAsync(cart);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.ShoppingCart.RemoveAsync(cart);
+            await _unitOfWork.SaveAsync();
 
             //var count2 = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == cart.ApplicationUserId);
 
 
-            var count = _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count;
+            var count = await Task.Run(() => _unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count);
 
             HttpContext.Session.SetInt32(SD.SessionCart, count);
              
-            return RedirectToAction(nameof(Index));
+            return await Task.Run(() => RedirectToAction(nameof(Index)));
         }
 
-        private double GetPriceBasedOnQuantity(double quantity, double price, double price50, double price100) 
+        private async Task<double> GetPriceBasedOnQuantity(double quantity, double price, double price50, double price100) 
         {
             if(quantity <= 50)
             {
-                return price;
+                return await Task.Run(() => price);
             }
             else
             {
                 if(quantity <= 100)
                 {
-                    return price50;
+                    return await Task.Run(() => price50);
                 }
-                return price100;
+                return await Task.Run(() => price100);
             }
 
 

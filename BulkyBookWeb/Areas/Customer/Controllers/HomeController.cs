@@ -21,10 +21,10 @@ namespace BulkyBook.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Product> productList = _unitOfWork.Product.GetAllAsync(includeProperties: "Category,CoverType");
-            return View(productList); 
+            IEnumerable<Product> productList = await Task.Run(() => _unitOfWork.Product.GetAllAsync(includeProperties: "Category,CoverType"));
+            return await Task.Run(() => View(productList)); 
         }
 
         // Wondering why this is not working try to solve this for the future
@@ -39,16 +39,16 @@ namespace BulkyBook.Controllers
         //    return View(cartObj);
         //}
 
-        public IActionResult Details(int productId)
+        public async Task<IActionResult> Details(int productId)
         {
             ShoppingCart cartObj = new()
             {
                 Count = 1,
                 ProductId = productId,
-                Product = _unitOfWork.Product.GetFirstOrDefaultAsync(u => u.Id == productId, includeProperties: "Category,CoverType"),
+                Product = await Task.Run(() => _unitOfWork.Product.GetFirstOrDefaultAsync(u => u.Id == productId, includeProperties: "Category,CoverType")),
             };
 
-            return View(cartObj);
+            return await Task.Run(() => View(cartObj));
         }
 
         [HttpPost]
@@ -57,12 +57,12 @@ namespace BulkyBook.Controllers
         public async Task<IActionResult> Details(ShoppingCart shoppingCart)
         {
             var claimsIdentity = (ClaimsIdentity?)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var claim = await Task.Run(() => claimsIdentity.FindFirst(ClaimTypes.NameIdentifier));
             shoppingCart.ApplicationUserId = claim.Value;
 
-            var cartFromDb = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(
+            var cartFromDb = await Task.Run(() => _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(
                                   u => u.ApplicationUserId == claim.Value && 
-                                  u.ProductId == shoppingCart.ProductId);
+                                  u.ProductId == shoppingCart.ProductId));
 
             if(cartFromDb == null)
             {
@@ -77,19 +77,19 @@ namespace BulkyBook.Controllers
                 await _unitOfWork.SaveAsync();
             }
 
-            return RedirectToAction(nameof(Index));
+            return await Task.Run(() => RedirectToAction(nameof(Index)));
         }
 
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Privacy()
         {
-            return View();
+            return await Task.Run(() => View());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public async Task<IActionResult> Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return await Task.Run(() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }));
         }
     }
 }

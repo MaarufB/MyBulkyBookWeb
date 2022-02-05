@@ -23,36 +23,36 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //IEnumerable<Product> objPoductList = _unitOfWork.Product.GetAll();
-            return View();
+            return await Task.Run(() => View());
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            return await Task.Run(() => View());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Company obj)
+        public async Task<IActionResult> Create(Company obj)
         {
             if (!ModelState.IsValid) ModelState.AddModelError("name", "Company name is not valid");
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Company.AddAsync(obj);
-                _unitOfWork.SaveAsync();
+                await _unitOfWork.Company.AddAsync(obj);
+                await _unitOfWork.SaveAsync();
                 TempData["success"] = "Company created successfully!";
 
-                return RedirectToAction("Index");
+                return await Task.Run(() => RedirectToAction("Index"));
             }
 
-            return View(obj);
+            return await Task.Run(() => View(obj));
         }
 
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
             Company company = new();
 
@@ -60,13 +60,13 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             {
                 // create product
 
-                return View(company);
+                return await Task.Run(() => View(company));
             }
             else
             {
                 //update product
                 company = _unitOfWork.Company.GetFirstOrDefaultAsync(u => u.Id == id);
-                return View(company);
+                return await Task.Run(() => View(company));
             }
 
         }
@@ -74,7 +74,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(Company obj)
+        public async Task<IActionResult> Upsert(Company obj)
         {
             
             if (ModelState.IsValid)
@@ -83,7 +83,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
                 if(obj.Id == 0)
                 {
-                    _unitOfWork.Company.AddAsync(obj);
+                    await _unitOfWork.Company.AddAsync(obj);
                     TempData["success"] = "Company created successfully!";
                 }
                 else
@@ -92,35 +92,35 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                     TempData["success"] = "Company updated successfully!";
                 }
 
-                _unitOfWork.SaveAsync();
+                await _unitOfWork.SaveAsync();
 
 
-                return RedirectToAction("Index");
+                return await Task.Run(() => RedirectToAction("Index"));
             }
 
-            return View(obj);
+            return await Task.Run(() => View(obj));
         }
         
 
         #region API CALLS
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var companyList = _unitOfWork.Company.GetAllAsync();
-            return Json(new { data = companyList });
+            return await Task.Run(() => Json(new { data = companyList }));
         }
 
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             var obj = _unitOfWork.Company.GetFirstOrDefaultAsync(c => c.Id == id);
 
-            if (obj == null) return Json(new {success = false, message="Error while deleting"});
+            if (obj == null) return await Task.Run(() => Json(new {success = false, message="Error while deleting"}));
 
-            _unitOfWork.Company.RemoveAsync(obj);
-            _unitOfWork.SaveAsync();
+            await _unitOfWork.Company.RemoveAsync(obj);
+            await _unitOfWork.SaveAsync();
 
-            return Json(new {success = true, message = "Company successfully deleted"});
+            return await Task.Run(() => Json(new {success = true, message = "Company successfully deleted"}));
 
         }
 
