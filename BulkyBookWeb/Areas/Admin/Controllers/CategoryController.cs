@@ -93,10 +93,10 @@ namespace BulkyBook.Controllers
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
+                await Task.Run(() => _unitOfWork.Category.Update(obj));
                 await _unitOfWork.SaveAsync();
                 TempData["success"] = "Category updated successfully";
-                return RedirectToAction("Index");
+                return await Task.Run(() => RedirectToAction("Index"));
 
             }
 
@@ -112,7 +112,7 @@ namespace BulkyBook.Controllers
         {
             if (id == null || id == 0) return NotFound();
 
-            var categoryFromDBFirst = _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id); //_db.Categories.Find(id);
+            var categoryFromDBFirst = await Task.Run(() => _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id)); //_db.Categories.Find(id);
 
             if (categoryFromDBFirst == null) return NotFound();
 
@@ -125,7 +125,7 @@ namespace BulkyBook.Controllers
         public async Task<IActionResult> DeletePost(int? id)
         {
             // This is a custom Error
-            var obj = _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id);
+            var obj = await Task.Run(() => _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id));
             
 
             if (obj == null) return NotFound();

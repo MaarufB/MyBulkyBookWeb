@@ -52,10 +52,10 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 await _unitOfWork.SaveAsync();
                 TempData["success"] = "Cover Type created successfully!";
 
-                return RedirectToAction("Index");
+                return await Task.Run(() => RedirectToAction("Index"));
             }
 
-            return View(obj);
+            return await Task.Run(() => View(obj));
         }
 
         public async Task<IActionResult> Upsert(int? id)
@@ -180,7 +180,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
-            var obj = await Task.Run(() =>_unitOfWork.Product.GetFirstOrDefaultAsync(c => c.Id == id));
+            var obj = await Task.Run(() => _unitOfWork.Product.GetFirstOrDefaultAsync(c => c.Id == id));
 
             if (obj == null) return await Task.Run(() => Json(new {success = false, message="Error while deleting"}));
 

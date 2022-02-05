@@ -18,7 +18,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var objCoverTypeList = _unitOfWork.CoverType.GetAllAsync();
+            var objCoverTypeList = await Task.Run(() => _unitOfWork.CoverType.GetAllAsync());
 
             return await Task.Run(() => View(objCoverTypeList));
         }
@@ -50,7 +50,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             if (id == null || id == 0) return NotFound();
 
-            var coverTypeFromDbFirst = _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id);
+            var coverTypeFromDbFirst = await Task.Run(() => _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id));
 
             if (coverTypeFromDbFirst == null) return NotFound();
 
@@ -65,7 +65,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             if (!ModelState.IsValid) ModelState.AddModelError("name", "Cover Type is not valid");
             if (ModelState.IsValid)
             {
-                _unitOfWork.CoverType.Update(obj);
+                await Task.Run(() => _unitOfWork.CoverType.Update(obj));
                 await _unitOfWork.SaveAsync();
                 TempData["success"] = "Cover Type update successfully!";
 
@@ -90,7 +90,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePost(int? id)
         {
-            var obj = _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id);
+            var obj = await Task.Run(() => _unitOfWork.CoverType.GetFirstOrDefaultAsync(c => c.Id == id));
 
             if (obj == null) return NotFound();
 

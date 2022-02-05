@@ -65,7 +65,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             else
             {
                 //update product
-                company = _unitOfWork.Company.GetFirstOrDefaultAsync(u => u.Id == id);
+                company = await Task.Run(() => _unitOfWork.Company.GetFirstOrDefaultAsync(u => u.Id == id));
                 return await Task.Run(() => View(company));
             }
 
@@ -88,7 +88,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 }
                 else
                 {
-                     _unitOfWork.Company.Update(obj);
+                     await Task.Run(() => _unitOfWork.Company.Update(obj));
                     TempData["success"] = "Company updated successfully!";
                 }
 
@@ -106,14 +106,14 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var companyList = _unitOfWork.Company.GetAllAsync();
+            var companyList = await Task.Run(() => _unitOfWork.Company.GetAllAsync());
             return await Task.Run(() => Json(new { data = companyList }));
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
-            var obj = _unitOfWork.Company.GetFirstOrDefaultAsync(c => c.Id == id);
+            var obj = await Task.Run(() => _unitOfWork.Company.GetFirstOrDefaultAsync(c => c.Id == id));
 
             if (obj == null) return await Task.Run(() => Json(new {success = false, message="Error while deleting"}));
 

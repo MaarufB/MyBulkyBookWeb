@@ -57,8 +57,8 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 OrderHeader= new()
             };
             
-            shoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefaultAsync(
-                u => u.Id==claim.Value);
+            shoppingCartVM.OrderHeader.ApplicationUser = await Task.Run(() => _unitOfWork.ApplicationUser.GetFirstOrDefaultAsync(
+                u => u.Id==claim.Value));
              shoppingCartVM.OrderHeader.Name = shoppingCartVM.OrderHeader.ApplicationUser.Name;
             shoppingCartVM.OrderHeader.PhoneNumber = shoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
             shoppingCartVM.OrderHeader.StreetAddress = shoppingCartVM.OrderHeader.ApplicationUser.Name;
@@ -117,7 +117,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                     Price = cart.Price,
                     Count = cart.Count
                 };
-               await _unitOfWork.OrderDetail.AddAsync(orderDetail);
+                await _unitOfWork.OrderDetail.AddAsync(orderDetail);
                 await _unitOfWork.SaveAsync();
             }
 
@@ -160,7 +160,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
                 var service = new SessionService();
 
-                var session = service.Create(options);
+                var session = await service.CreateAsync(options);
 
                 shoppingCartVM.OrderHeader.SessionId = session.Id;
                 shoppingCartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
@@ -234,7 +234,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
 
         public async Task<IActionResult> Remove(int cartId)
         {
-            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id == cartId);
+            var cart = await Task.Run(() => _unitOfWork.ShoppingCart.GetFirstOrDefaultAsync(u => u.Id == cartId));
             await _unitOfWork.ShoppingCart.RemoveAsync(cart);
             await _unitOfWork.SaveAsync();
 
