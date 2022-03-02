@@ -177,6 +177,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return await Task.Run(() => Json(new { data = productList }));
         }
 
+
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {

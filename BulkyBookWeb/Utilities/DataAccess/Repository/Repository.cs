@@ -12,14 +12,14 @@ namespace BulkyBook.DataAccess.Repository
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _db;
-        internal DbSet<T> dbSet;
+        private readonly DbSet<T> dbSet;
 
         public Repository(ApplicationDbContext db)
         {
             _db = db;
             //_db.ShoppingCarts.AsNoTracking().
             //_db.ShoppingCarts.Include(u => u.Product).Include(u=> u.Product);
-            this.dbSet = _db.Set<T>();  
+            dbSet = _db.Set<T>();  
         }
 
         public async Task AddAsync(T entity)
@@ -45,7 +45,7 @@ namespace BulkyBook.DataAccess.Repository
             return  query.ToList(); 
         }
 
-        public T GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true)
+        public async Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true)
         {
             IQueryable<T> query;
 
@@ -69,7 +69,7 @@ namespace BulkyBook.DataAccess.Repository
                 }
             }
 
-            return query.FirstOrDefault(); //FirstOrDefault(); // To eleminate the warning the best approach to use is query.First()
+            return await Task.Run(() => query.FirstOrDefault()); // To eleminate the warning the best approach to use is query.First()
         }
 
         public async Task RemoveAsync(T entity)

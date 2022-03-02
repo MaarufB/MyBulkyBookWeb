@@ -11,7 +11,7 @@ namespace BulkyBook.DataAccess.Repository.IRepository
     public interface IRepository<T> where T : class
     {
         // T - Category
-        T GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter,string? includeProperties = null, bool tracked = true); // Change GetFirstOrDefault to Find()
+        Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter,string? includeProperties = null, bool tracked = true); // Change GetFirstOrDefault to Find()
         IEnumerable<T> GetAllAsync(Expression<Func<T, bool>>? filter=null, string? includeProperties = null);
         Task AddAsync(T entity);
         Task RemoveAsync(T entity);
