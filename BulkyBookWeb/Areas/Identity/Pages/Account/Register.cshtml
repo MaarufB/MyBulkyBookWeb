@@ -12,6 +12,7 @@
 else{
 <h1 class="pt-4">@ViewData["Title"]</h1>
 }
+
 <div class="row pt-4">
     <div class="col-md-7 ">
         <form id="registerForm" class="row" asp-route-returnUrl="@Model.ReturnUrl" method="post">
@@ -81,7 +82,7 @@ else{
             <button id="registerSubmit" type="submit" class="w-100 btn btn-primary">Register</button>
         </form>
     </div>
-    @if (!User.IsInRole(SD.Role_Admin))
+   @* @if (!User.IsInRole(SD.Role_Admin))
     {
         <div class="col-md-5 ">
             <section>
@@ -113,7 +114,7 @@ else{
                 }
             </section>
         </div>
-    }
+    }*@
 </div>
 
 @section Scripts {

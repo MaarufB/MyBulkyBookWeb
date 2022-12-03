@@ -1,3 +1,0 @@
-﻿UNIT OF WORK
-	- The Unit Of Work class coordinates the work of multiple repositories by creating a single database context class shared by all of them
-

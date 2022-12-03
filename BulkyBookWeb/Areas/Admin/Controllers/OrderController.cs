@@ -21,29 +21,29 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return await Task.Run(() => View());
         }
 
-        public IActionResult Details(int orderId)
+        public async Task<IActionResult> Details(int orderId)
         {
             orderVM = new()
             {
-                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderId, includeProperties: "ApplicationUser"),
-                OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == orderId, includeProperties: "Product"),
+                OrderHeader = await Task.Run(() => _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderId, includeProperties: "ApplicationUser")),
+                OrderDetail = await Task.Run(() => _unitOfWork.OrderDetail.GetAllAsync(u => u.OrderId == orderId, includeProperties: "Product")),
             };
 
-            return View(orderVM);
+            return await Task.Run(() => View(orderVM));
         }
 
         [ActionName("Details")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Details_PAY_NOW()
+        public async Task<IActionResult> Details_PAY_NOW()
         {
-            orderVM.OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
-            orderVM.OrderDetail = _unitOfWork.OrderDetail.GetAll(u => u.OrderId == orderVM.OrderHeader.Id, includeProperties: "Product");
+            orderVM.OrderHeader = await Task.Run(() => _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, includeProperties: "ApplicationUser"));
+            orderVM.OrderDetail = await Task.Run(() => _unitOfWork.OrderDetail.GetAllAsync(u => u.OrderId == orderVM.OrderHeader.Id, includeProperties: "Product"));
 
 
             //Stripe Setting 
@@ -82,44 +82,46 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             var service = new SessionService();
 
-            var session = service.Create(options);
+            var session = await service.CreateAsync(options);
 
             orderVM.OrderHeader.SessionId = session.Id;
             orderVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;
             _unitOfWork.OrderHeader.UpdateStripePaymentID(orderVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
-            _unitOfWork.Save();
-            Response.Headers.Add("Location", session.Url);
+           await  _unitOfWork.SaveAsync();
+           Response.Headers.Add("Location", session.Url);
          
-            return new StatusCodeResult(303);
+            return await Task.Run(() => new StatusCodeResult(303));
         }
 
-        public IActionResult PaymentConfirmation(int orderHeaderid)
+        public async Task<IActionResult> PaymentConfirmation(int orderHeaderid)
         {
-            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderHeaderid);
-
+            var orderHeader = await Task.Run(() => _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderHeaderid));
 
             if (orderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment)
             {
                 var service = new SessionService();
-                var session = service.Get(orderHeader.SessionId);
+                var session = await service.GetAsync(orderHeader.SessionId);
                 var orderHeaderIsNull = orderHeader.OrderStatus;
                 // Check the stripe status
+                // To elminate the warning for null
+                var orderStatus =  orderHeader.OrderStatus != null ? orderHeader.OrderStatus : "Null";
+
                 if (session.PaymentStatus.ToLower() == "paid")
                 {
-                    _unitOfWork.OrderHeader.UpdateStatus(orderHeaderid, orderHeader.OrderStatus, SD.PaymentStatusApproved);
-                    _unitOfWork.Save();
+                    await Task.Run(() => _unitOfWork.OrderHeader.UpdateStatus(orderHeaderid, orderStatus, SD.PaymentStatusApproved));
+                    await _unitOfWork.SaveAsync();
                 }
             }
 
 
 
-            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            var shoppingCarts = await Task.Run(()=>_unitOfWork.ShoppingCart.GetAllAsync(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList());
 
 
-            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
-            _unitOfWork.Save();
+            await _unitOfWork.ShoppingCart.RemoveRangeAsync(shoppingCarts);
+            await _unitOfWork.SaveAsync();
 
-            return View(orderHeaderid);
+            return await Task.Run(() => View(orderHeaderid));
 
         }
 
@@ -127,9 +129,9 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateOrderDetail(int orderId)
+        public async Task<IActionResult> UpdateOrderDetail(int orderId)
         {
-            var orderHeaderFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderVM.OrderHeader.Id, tracked:false);
+            var orderHeaderFromDb = await Task.Run(() => _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, tracked:false));
             orderHeaderFromDb.Name = orderVM.OrderHeader.Name;
             orderHeaderFromDb.PhoneNumber = orderVM.OrderHeader.PhoneNumber;
             orderHeaderFromDb.StreetAddress = orderVM.OrderHeader.StreetAddress;
@@ -145,34 +147,34 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             {
                 orderHeaderFromDb.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
             }
-            _unitOfWork.OrderHeader.Update(orderHeaderFromDb);
-            _unitOfWork.Save();
+            await Task.Run(() => _unitOfWork.OrderHeader.Update(orderHeaderFromDb));
+            await _unitOfWork.SaveAsync();
 
             TempData["Success"] = "Order Details Upated Successfully!";
 
 
-            return RedirectToAction("Details", "Order", new { orderId = orderHeaderFromDb.Id });
+            return await Task.Run(() => RedirectToAction("Details", "Order", new { orderId = orderHeaderFromDb.Id }));
         }
 
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
-        public IActionResult StartProcessing(int orderId)
+        public async Task<IActionResult> StartProcessing(int orderId)
         {
-            _unitOfWork.OrderHeader.UpdateStatus(orderVM.OrderHeader.Id, SD.StatusInProcess);
-            _unitOfWork.Save();
+            await Task.Run(() => _unitOfWork.OrderHeader.UpdateStatus(orderVM.OrderHeader.Id, SD.StatusInProcess));
+            await _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Status Upated Successfully!";
 
-            return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
+            return await Task.Run(() => RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id }));
         }
 
 
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
-        public IActionResult ShipOrder(int orderId)
+        public async Task<IActionResult> ShipOrder(int orderId)
         {
-            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u=>u.Id==orderVM.OrderHeader.Id, tracked: false);
+            var orderHeader = await Task.Run(() => _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u=>u.Id==orderVM.OrderHeader.Id, tracked: false));
             orderHeader.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
             orderHeader.Carrier = orderVM.OrderHeader.Carrier;
             orderHeader.OrderStatus = SD.StatusShipped;
@@ -183,19 +185,19 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 orderHeader.PaymentDueDate = DateTime.Now.AddDays(30);
             }
 
-            _unitOfWork.OrderHeader.Update(orderHeader);  
-            _unitOfWork.Save();
+            await Task.Run(() => _unitOfWork.OrderHeader.Update(orderHeader));  
+            await _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Shipped Successfully!";
 
-            return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
+            return await Task.Run(() => RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id }));
         }
 
         [HttpPost]
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         [ValidateAntiForgeryToken]
-        public IActionResult CancelOrder(int orderId)
+        public async Task<IActionResult> CancelOrder(int orderId)
         {
-            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == orderVM.OrderHeader.Id, tracked: false);
+            var orderHeader = await Task.Run(() => _unitOfWork.OrderHeader.GetFirstOrDefaultAsync(u => u.Id == orderVM.OrderHeader.Id, tracked: false));
             if(orderHeader.PaymentStatus == SD.PaymentStatusApproved)
             {
                 var options = new RefundCreateOptions
@@ -205,36 +207,36 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 };
 
                 var service = new RefundService();
-                var refund = service.Create(options);
+                var refund = await service.CreateAsync(options);
                 
-                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded);
+                await Task.Run(() => _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded));
             }
             else
             {
-                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
+                await Task.Run(() => _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled));
             }
 
-            _unitOfWork.Save();
+            await _unitOfWork.SaveAsync();
             TempData["Success"] = "Order Cancelled Successfully!";
 
-            return RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id });
+            return await Task.Run(() => RedirectToAction("Details", "Order", new { orderId = orderVM.OrderHeader.Id }));
         }
 
         #region API CALLS
         [HttpGet]
-        public IActionResult GetAll(string? status)
+        public async Task<IActionResult> GetAll(string? status)
         {
             IEnumerable<OrderHeader> orderHeaders;
             if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
             {
-                orderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
+                orderHeaders = await Task.Run(() => _unitOfWork.OrderHeader.GetAllAsync(includeProperties: "ApplicationUser"));
             }
             else 
             {
                 var claimsIdentity = (ClaimsIdentity?)User.Identity;
                 var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-                orderHeaders = _unitOfWork.OrderHeader.GetAll(u => u.ApplicationUserId == claim.Value, includeProperties: "ApplicationUser");
+                orderHeaders = await Task.Run(() => _unitOfWork.OrderHeader.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "ApplicationUser"));
             }            
             
             switch (status)
@@ -256,7 +258,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                     break;
             }
 
-            return Json(new {data = orderHeaders});
+            return await Task.Run(() => Json(new {data = orderHeaders}));
         }
         #endregion
     }

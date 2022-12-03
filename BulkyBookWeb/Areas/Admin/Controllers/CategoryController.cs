@@ -19,20 +19,19 @@ namespace BulkyBook.Controllers
             _unitOfWork  = unitOfWork;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult>Index()
         {
+            var objCategoryList = _unitOfWork.Category.GetAllAsync();//ToListAsync();
 
-            var objCategoryList = _unitOfWork.Category.GetAll();//ToListAsync();
-
-            return View(objCategoryList);
+            return await Task.Run(() => View(objCategoryList));
         }
 
 
         //GET
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
 
-            return View();
+            return await Task.Run(() => View());
         }
 
 
@@ -50,8 +49,8 @@ namespace BulkyBook.Controllers
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Add(obj);
-                _unitOfWork.Save();
+                _unitOfWork.Category.AddAsync(obj);
+                _unitOfWork.SaveAsync();
                 TempData["success"] = "Category created successfully";
 
                 return RedirectToAction("Index");
@@ -62,12 +61,12 @@ namespace BulkyBook.Controllers
         }
 
         // GET method to render the view for edit controller
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || id == 0) return NotFound();
 
             //var categoryFromDB = _db.Categories.Find(id);
-            var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(c => c.Id == id);
+            var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefaultAsync(c => c.Id == id);
             //var categoryFromDbSingleOrDefault = _db.Categories.SingleOrDefault(c => c.Id == id);
 
             // You can use single or singleordefault. SingleOrDefault will return empty if the id is not found. The single will throw an error if the id is not found
@@ -77,13 +76,13 @@ namespace BulkyBook.Controllers
 
             if (categoryFromDbFirst == null) return NotFound();
             
-            return View(categoryFromDbFirst);
+            return await Task.Run(() =>View(categoryFromDbFirst));
         }
 
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken] // Watch the video for more details about AntiForgeToken on dotnetmaster.com
-        public IActionResult Edit(Category obj)
+        public async Task<IActionResult> Edit(Category obj)
         {
             // This is a custom Error
             if (obj.Name == obj.DisplayOrder.ToString())
@@ -94,14 +93,14 @@ namespace BulkyBook.Controllers
 
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
-                _unitOfWork.Save();
+                await Task.Run(() => _unitOfWork.Category.Update(obj));
+                await _unitOfWork.SaveAsync();
                 TempData["success"] = "Category updated successfully";
-                return RedirectToAction("Index");
+                return await Task.Run(() => RedirectToAction("Index"));
 
             }
 
-            return View(obj);
+            return await Task.Run(() => View(obj));
         }
 
 
@@ -109,33 +108,33 @@ namespace BulkyBook.Controllers
 
 
         // GET method to render the view for Delete controller
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || id == 0) return NotFound();
 
-            var categoryFromDBFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id); //_db.Categories.Find(id);
+            var categoryFromDBFirst = await Task.Run(() => _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id)); //_db.Categories.Find(id);
 
             if (categoryFromDBFirst == null) return NotFound();
 
-            return View(categoryFromDBFirst);
+            return await Task.Run(() => View(categoryFromDBFirst));
         }
 
         //POST
         [HttpPost, ActionName("Delete")] // The reason for that is we change the asp-action value to Delete instead of DeletePost
         [ValidateAntiForgeryToken] // Watch the video for more details about AntiForgeToken on dotnetmaster.com
-        public IActionResult DeletePost(int? id)
+        public async Task<IActionResult> DeletePost(int? id)
         {
             // This is a custom Error
-            var obj = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
-
+            var obj = await Task.Run(() => _unitOfWork.Category.GetFirstOrDefaultAsync(u => u.Id == id));
+            
 
             if (obj == null) return NotFound();
 
-            _unitOfWork.Category.Remove(obj);
-            _unitOfWork.Save();
+            await _unitOfWork.Category.RemoveAsync(obj);
+            await _unitOfWork.SaveAsync();
             TempData["success"] = "Category deleted successfully";
 
-            return RedirectToAction("Index");
+            return await Task.Run(() => RedirectToAction("Index"));
         }
     }
 }
