@@ -1,33 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\BulkyBookWeb.csproj": {}
+    "/home/maarufb/Desktop/Projects/Web/dotnet-projects/bulky2/MyBulkyBookWeb/BulkyBookWeb/BulkyBookWeb.csproj": {}
   },
   "projects": {
-    "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\BulkyBookWeb.csproj": {
+    "/home/maarufb/Desktop/Projects/Web/dotnet-projects/bulky2/MyBulkyBookWeb/BulkyBookWeb/BulkyBookWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\BulkyBookWeb.csproj",
+        "projectUniqueName": "/home/maarufb/Desktop/Projects/Web/dotnet-projects/bulky2/MyBulkyBookWeb/BulkyBookWeb/BulkyBookWeb.csproj",
         "projectName": "BulkyBookWeb",
-        "projectPath": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\BulkyBookWeb.csproj",
-        "packagesPath": "C:\\Users\\SKYLAND-14\\.nuget\\packages\\",
-        "outputPath": "D:\\My_Files\\SofwareCareerPath\\Dotnet Development\\Course\\BulkyBook\\BulkyBookWeb\\obj\\",
+        "projectPath": "/home/maarufb/Desktop/Projects/Web/dotnet-projects/bulky2/MyBulkyBookWeb/BulkyBookWeb/BulkyBookWeb.csproj",
+        "packagesPath": "/home/maarufb/.nuget/packages/",
+        "outputPath": "/home/maarufb/Desktop/Projects/Web/dotnet-projects/bulky2/MyBulkyBookWeb/BulkyBookWeb/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
-        ],
         "configFilePaths": [
-          "C:\\Users\\SKYLAND-14\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "/home/maarufb/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -119,7 +111,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/6.0.111/RuntimeIdentifierGraph.json"
         }
       }
     }
